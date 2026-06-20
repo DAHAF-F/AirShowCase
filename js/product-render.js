@@ -119,58 +119,92 @@ window.AirShowcase = window.AirShowcase || {};
     bgCtx.fillRect(0, 0, width, height);
   }
 
-  // ---- The hologram itself: a faceted capsule, drawn with simple 2.5D facets ----
+  // ---- The hologram itself: a faceted crystal silhouette with real light/shadow facets ----
   function drawHologram(center, scale, rotation, variant) {
     const v = VARIANTS[variant];
-    const baseSize = Math.min(width, height) * 0.16 * scale;
+    const s = Math.min(width, height) * 0.17 * scale;
 
     ctx.save();
     ctx.translate(center.x, center.y);
     ctx.rotate(rotation);
 
-    // Outer glow halo
-    ctx.shadowBlur = 40 * scale;
+    // Soft outer glow behind the whole object
+    ctx.shadowBlur = 50 * scale;
     ctx.shadowColor = v.glow;
-
-    // Faceted capsule body: drawn as stacked rotated ellipses to fake 3D
-    const facets = 6;
-    for (let i = facets; i >= 0; i--) {
-      const t = i / facets;
-      const fy = lerp(-baseSize * 1.1, baseSize * 1.1, t);
-      const fw = baseSize * (0.55 + 0.45 * Math.sin(t * Math.PI));
-      const shade = lerp(0.35, 1, Math.sin(t * Math.PI));
-
-      ctx.beginPath();
-      ctx.ellipse(0, fy, fw, fw * 0.32, 0, 0, Math.PI * 2);
-      ctx.fillStyle = v.core;
-      ctx.globalAlpha = 0.85;
-      ctx.fill();
-
-      ctx.strokeStyle = v.glow;
-      ctx.globalAlpha = shade;
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    }
-
-    // Vertical core spine (gives it a "product" silhouette rather than a blob)
-    ctx.globalAlpha = 1;
-    ctx.shadowBlur = 25 * scale;
     ctx.beginPath();
-    ctx.moveTo(0, -baseSize * 1.15);
-    ctx.lineTo(0, baseSize * 1.15);
+    ctx.ellipse(0, 0, s * 0.55, s * 1.3, 0, 0, Math.PI * 2);
+    ctx.fillStyle = v.core;
+    ctx.globalAlpha = 0.18;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Define an elongated hexagonal gem outline (tip, shoulders, base)
+    const outline = [
+      { x: 0,          y: -s * 1.3 },   // top tip
+      { x: s * 0.55,   y: -s * 0.45 },  // right shoulder
+      { x: s * 0.42,   y: s * 0.95 },   // right base
+      { x: 0,          y: s * 1.3 },    // bottom tip
+      { x: -s * 0.42,  y: s * 0.95 },   // left base
+      { x: -s * 0.55,  y: -s * 0.45 },  // left shoulder
+    ];
+
+    // Split into facets sharing a center spine so each catches light differently
+    const facets = [
+      { pts: [outline[0], outline[1], { x: 0, y: -s * 0.45 }], light: 1.0 },
+      { pts: [outline[1], outline[2], { x: 0, y: s * 0.1 }, { x: 0, y: -s * 0.45 }], light: 0.7 },
+      { pts: [outline[2], outline[3], { x: 0, y: s * 0.1 }], light: 0.45 },
+      { pts: [outline[3], outline[4], { x: 0, y: s * 0.1 }], light: 0.55 },
+      { pts: [outline[4], outline[5], { x: 0, y: -s * 0.45 }, { x: 0, y: s * 0.1 }], light: 0.8 },
+      { pts: [outline[5], outline[0], { x: 0, y: -s * 0.45 }], light: 1.0 },
+    ];
+
+    ctx.shadowBlur = 0;
+    facets.forEach((f) => {
+      ctx.beginPath();
+      ctx.moveTo(f.pts[0].x, f.pts[0].y);
+      for (let i = 1; i < f.pts.length; i++) ctx.lineTo(f.pts[i].x, f.pts[i].y);
+      ctx.closePath();
+      ctx.fillStyle = v.core;
+      ctx.globalAlpha = 0.55 + f.light * 0.4;
+      ctx.fill();
+      ctx.strokeStyle = v.glow;
+      ctx.globalAlpha = 0.5;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+
+    // Crisp bright outline so it reads as a defined object, not a haze
+    ctx.shadowBlur = 18 * scale;
+    ctx.shadowColor = v.glow;
+    ctx.beginPath();
+    ctx.moveTo(outline[0].x, outline[0].y);
+    for (let i = 1; i < outline.length; i++) ctx.lineTo(outline[i].x, outline[i].y);
+    ctx.closePath();
     ctx.strokeStyle = v.particle;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1.5;
     ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Center spine highlight (subtle, gives the gem an internal facet line)
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(0, -s * 0.45);
+    ctx.lineTo(0, s * 0.1);
+    ctx.strokeStyle = v.particle;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
 
     // Lock pulse ring
     if (lockPulse > 0) {
       ctx.globalAlpha = lockPulse;
-      ctx.shadowBlur = 0;
       ctx.beginPath();
-      ctx.arc(0, 0, baseSize * (1.6 + (1 - lockPulse) * 1.2), 0, Math.PI * 2);
+      ctx.arc(0, 0, s * (1.5 + (1 - lockPulse) * 1.1), 0, Math.PI * 2);
       ctx.strokeStyle = v.glow;
       ctx.lineWidth = 3;
       ctx.stroke();
+      ctx.globalAlpha = 1;
     }
 
     ctx.restore();
@@ -245,10 +279,10 @@ window.AirShowcase = window.AirShowcase || {};
       target.y -= height * 0.14;
 
       if (!smoothedPos) smoothedPos = { ...target };
-      smoothedPos.x = lerp(smoothedPos.x, target.x, 0.12);
-      smoothedPos.y = lerp(smoothedPos.y, target.y, 0.12);
-      smoothedScale = lerp(smoothedScale, m.scale, 0.08);
-      smoothedRot = lerpAngle(smoothedRot, m.rotation, 0.07);
+      smoothedPos.x = lerp(smoothedPos.x, target.x, 0.25);
+      smoothedPos.y = lerp(smoothedPos.y, target.y, 0.25);
+      smoothedScale = lerp(smoothedScale, m.scale, 0.18);
+      smoothedRot = lerpAngle(smoothedRot, m.rotation, 0.15);
 
       drawHologram(smoothedPos, smoothedScale, smoothedRot, lockedVariant || currentVariant);
 
