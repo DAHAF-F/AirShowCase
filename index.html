@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AirShowcase — Gesture-Controlled Product Reveals for Launch Events</title>
+<meta name="description" content="A hands-free, camera-tracked product hologram for booths, launch events, and retail windows. No headset, no controller — just hands.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="nav-inner">
+    <div class="nav-mark">AIR<span>SHOWCASE</span></div>
+    <nav class="nav-links">
+      <a href="#demo">Demo</a>
+      <a href="#how">How it works</a>
+      <a href="#use-cases">Use cases</a>
+      <a href="#book">Book it</a>
+    </nav>
+    <a href="#book" class="nav-cta">Book a slot</a>
+  </div>
+</header>
+
+<!-- ============ HERO / LIVE DEMO ============ -->
+<section class="hero" id="demo">
+
+  <div class="hero-copy">
+    <p class="eyebrow">FOR BRAND LAUNCH EVENTS &amp; EXPO BOOTHS</p>
+    <h1>Your product,<br>floating in <span class="accent">thin air.</span></h1>
+    <p class="hero-sub">No headset. No controller. A visitor opens their hand and your product appears above their palm — they rotate it, resize it, and pick a colour, just by moving. This is what's running behind the camera feed below, live, right now.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" id="heroStartBtn">Try the live demo</button>
+      <a href="#how" class="btn-ghost">See how it works ↓</a>
+    </div>
+    <div class="hero-trust">
+      <span>Built for</span>
+      <strong>product launches</strong><span class="dot">·</span>
+      <strong>expo booths</strong><span class="dot">·</span>
+      <strong>retail windows</strong>
+    </div>
+  </div>
+
+  <div class="demo-stage">
+    <div class="video-container">
+      <video class="input_video" autoplay playsinline muted></video>
+      <canvas id="bgCanvas"></canvas>
+      <canvas id="mainCanvas"></canvas>
+
+      <!-- Start Overlay -->
+      <div id="startOverlay">
+        <div class="overlay-icon">✋</div>
+        <h3>Activate the demo</h3>
+        <p>Allow camera access — this runs entirely in your browser, nothing is recorded or uploaded.</p>
+        <button class="start-btn" id="startBtn">Enable camera</button>
+      </div>
+
+      <!-- HUD -->
+      <div id="hud" class="hidden">
+        <div class="panel">
+          <div class="stat">Hands tracked <span class="val" id="ui-hands">0</span></div>
+          <div class="stat">Gesture <span class="val" id="ui-gesture">—</span></div>
+        </div>
+      </div>
+
+      <!-- Product variant switcher -->
+      <div id="variants" class="hidden">
+        <button class="variant-btn active" data-variant="Onyx" style="--swatch:#1c1c22">Onyx</button>
+        <button class="variant-btn" data-variant="Amber" style="--swatch:#ff6b35">Amber</button>
+        <button class="variant-btn" data-variant="Steel" style="--swatch:#3d5a80">Steel</button>
+        <button class="variant-btn" data-variant="Mint" style="--swatch:#4ade80">Mint</button>
+      </div>
+
+      <div id="demoHint" class="demo-hint hidden">Open your hand under the product · pinch to lock a colour</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOGOS / SOCIAL PROOF STRIP ============ -->
+<section class="strip">
+  <p class="strip-label">Designed for teams running</p>
+  <div class="strip-items">
+    <span>Product launch events</span>
+    <span>Trade show booths</span>
+    <span>Retail window displays</span>
+    <span>Press &amp; media days</span>
+    <span>Pop-up activations</span>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how" id="how">
+  <p class="eyebrow center">HOW IT WORKS</p>
+  <h2 class="section-title center">Three things happen, in order</h2>
+
+  <div class="how-grid">
+    <div class="how-card">
+      <div class="how-num">01</div>
+      <h3>A camera watches the booth</h3>
+      <p>Any laptop or kiosk webcam works. No depth sensor, no headset, no app to download. The visitor just walks up and raises a hand.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">02</div>
+      <h3>Hand tracking drives the product</h3>
+      <p>21 points per hand are tracked in real time. Palm position sets where your product floats; hand rotation and spread set its angle and scale.</p>
+    </div>
+    <div class="how-card">
+      <div class="how-num">03</div>
+      <h3>A pinch locks the moment</h3>
+      <p>Pinching fingers together locks a colourway or variant — the natural "yes, this one" gesture — and can trigger a lead-capture screen or a printed receipt at the booth.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ USE CASES ============ -->
+<section class="use-cases" id="use-cases">
+  <p class="eyebrow center">WHERE THIS GETS BOOKED</p>
+  <h2 class="section-title center">One screen, four kinds of moment</h2>
+
+  <div class="case-grid">
+    <article class="case-card">
+      <h3>Launch reveal</h3>
+      <p>The first 200 people to see a new product see it floating before it's on a shelf anywhere. Built for the press photo.</p>
+    </article>
+    <article class="case-card">
+      <h3>Expo booth draw</h3>
+      <p>A hands-free demo pulls foot traffic from across the hall — people stop for the gesture, stay for the pitch.</p>
+    </article>
+    <article class="case-card">
+      <h3>Retail window</h3>
+      <p>Runs unattended behind glass. Passersby interact through the window itself; no staff required to operate it.</p>
+    </article>
+    <article class="case-card">
+      <h3>Pop-up activation</h3>
+      <p>Pairs the demo with a lead form on lock-in, so every "wow" moment becomes an email address or a follow.</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ BOOK IT / LEAD FORM ============ -->
+<section class="book" id="book">
+  <div class="book-inner">
+    <div class="book-copy">
+      <p class="eyebrow">BOOK THIS FOR YOUR EVENT</p>
+      <h2>Tell me about the launch.</h2>
+      <p class="book-sub">Send the date, the product, and the venue — I'll reply with a build plan and a quote. This page itself, the live demo included, is the kind of build I deliver.</p>
+      <ul class="book-list">
+        <li>Custom-branded hologram &amp; colourways for your product</li>
+        <li>Runs on a single laptop + webcam, no extra hardware</li>
+        <li>Optional lead-capture screen on gesture lock-in</li>
+      </ul>
+    </div>
+
+    <form class="book-form" id="bookForm">
+      <label>Name
+        <input type="text" name="name" required placeholder="Your name">
+      </label>
+      <label>Work email
+        <input type="email" name="email" required placeholder="you@brand.com">
+      </label>
+      <label>Event date
+        <input type="text" name="date" placeholder="e.g. 14 Sept 2026">
+      </label>
+      <label>Tell me about the launch
+        <textarea name="message" rows="4" placeholder="Product, venue, expected footfall..."></textarea>
+      </label>
+      <button type="submit" class="btn-primary full">Send enquiry</button>
+      <p class="form-note" id="formNote">Replies within 24 hours.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="footer">
+  <p>AirShowcase — a gesture-tracking product activation, built and run entirely in-browser.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+<script src="js/hand-tracking.js"></script>
+<script src="js/product-render.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
