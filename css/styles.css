@@ -210,7 +210,7 @@ img, video, canvas { display: block; max-width: 100%; }
   object-fit: cover;
   transform: scaleX(-1);
   z-index: 0;
-  filter: brightness(0.55) contrast(1.1) saturate(0.9);
+  filter: brightness(0.85) contrast(1.05) saturate(0.95);
 }
 
 #bgCanvas, #mainCanvas {
