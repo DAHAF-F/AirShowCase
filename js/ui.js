@@ -54,18 +54,40 @@
     });
   };
 
-  // ---- Lead form (front-end only demo — no backend wired up) ----
+  // ---- Lead form (submits to Formspree) ----
   const bookForm = document.getElementById('bookForm');
   const formNote = document.getElementById('formNote');
+  const submitBtn = bookForm.querySelector('button[type="submit"]');
 
-  bookForm.addEventListener('submit', (e) => {
+  const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkoadeno';
+
+  bookForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = new FormData(bookForm);
     const name = (data.get('name') || '').toString().trim();
 
-    // This is a static front-end demo: no server endpoint is wired up yet.
-    // Replace this block with a fetch() to your form backend / mailer of choice.
-    formNote.textContent = `Thanks${name ? ', ' + name : ''} — this demo form isn't connected to an inbox yet. Wire it to your email service or a form backend to go live.`;
-    bookForm.reset();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+    formNote.textContent = 'Sending your enquiry…';
+
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: data
+      });
+
+      if (res.ok) {
+        formNote.textContent = `Thanks${name ? ', ' + name : ''} — got it. I'll reply within 24 hours.`;
+        bookForm.reset();
+      } else {
+        formNote.textContent = 'Something went wrong sending that. Please try again or email me directly.';
+      }
+    } catch (err) {
+      formNote.textContent = 'Network error — please check your connection and try again.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send enquiry';
+    }
   });
 })();
