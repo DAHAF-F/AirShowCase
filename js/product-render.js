@@ -55,6 +55,13 @@ window.AirShowcase = window.AirShowcase || {};
 
   function lerp(a, b, t) { return a + (b - a) * t; }
 
+  function lerpAngle(a, b, t) {
+    let diff = b - a;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    return a + diff * t;
+  }
+
   // ---- Particle / ripple effects (ambient polish around the hologram) ----
   function spawnParticles(pos, color, count = 2) {
     for (let i = 0; i < count; i++) {
@@ -238,10 +245,10 @@ window.AirShowcase = window.AirShowcase || {};
       target.y -= height * 0.14;
 
       if (!smoothedPos) smoothedPos = { ...target };
-      smoothedPos.x = lerp(smoothedPos.x, target.x, 0.18);
-      smoothedPos.y = lerp(smoothedPos.y, target.y, 0.18);
-      smoothedScale = lerp(smoothedScale, m.scale, 0.15);
-      smoothedRot = lerp(smoothedRot, m.rotation, 0.12);
+      smoothedPos.x = lerp(smoothedPos.x, target.x, 0.12);
+      smoothedPos.y = lerp(smoothedPos.y, target.y, 0.12);
+      smoothedScale = lerp(smoothedScale, m.scale, 0.08);
+      smoothedRot = lerpAngle(smoothedRot, m.rotation, 0.07);
 
       drawHologram(smoothedPos, smoothedScale, smoothedRot, lockedVariant || currentVariant);
 
